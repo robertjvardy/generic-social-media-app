@@ -1,0 +1,11 @@
+.auth-form-container {
+  background-color: white;
+  padding: 5rem 10rem;
+  border-radius: 4%;
+  color: #282c34;
+  .login-form-container,
+  .register-form-container {
+    display: flex;
+    flex-direction: column;
+  }
+}

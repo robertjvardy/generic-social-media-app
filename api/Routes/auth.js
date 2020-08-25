@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const lo = require("lodash");
 const User = require("../Models/User");
 const { registrationVal, loginVal } = require("../Validations/auth");
 
@@ -57,14 +58,25 @@ router.post("/login", (req, res) => {
         expiresIn: "1d",
       });
 
-      return res
-        .header("auth-token", token)
-        .status(200)
-        .json({ message: "Logged in!", token });
+      const { friends, posts, email, firstName, lastName } = user;
+
+      return res.header("auth-token", token).status(200).json({
+        message: "Logged in!",
+        authToken: token,
+        userInfo: { friends, posts, email, firstName, lastName },
+      });
     })
     .catch((error) => {
       return res.status(400).json({ error });
     });
+});
+
+router.post("/authenticate", (req, res) => {
+  const verified = jwt.verify(req.body.token, process.env.TOKEN_SECRET);
+  if (verified) {
+    return res.status(200).json({ verified: true });
+  }
+  return res.status(400).json({ verified: false });
 });
 
 module.exports = router;

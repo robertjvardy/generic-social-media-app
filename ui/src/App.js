@@ -1,17 +1,42 @@
-import React from "react";
-import { Switch, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Switch, Route, Redirect } from "react-router-dom";
 import "./App.css";
-import Login from "./scenes/Login";
+import Authentication from "./scenes/Authentication/Authentication";
+import Main from "./scenes/Main";
+import { verifyAuthCookie } from "./utils/authUtils";
+import axios from "axios";
+import Cookie from "js-cookie";
+import { useDispatch } from "react-redux";
+import { setAuthenticated } from "./scenes/Authentication/slice";
 
-function App() {
+const App = () => {
+  const dispatch = useDispatch();
+  const token = Cookie.get("auth-token");
+  const fetchAuth = async () => {
+    await axios
+      .post("/api/user/authenticate", {
+        token,
+      })
+      .then(() => dispatch(setAuthenticated(true)));
+  };
+
+  useEffect(() => {
+    if (token) {
+      // fetchAuth();
+    }
+  }, []);
   return (
     <div className="App">
       <Switch>
-        <Route exact path="/" render={() => <Login />} />
-        <Route exact path="/test" render={() => <div>Test test</div>} />
+        <Route path="/auth" render={() => <Authentication />} />
+        <Route
+          path="/main"
+          render={() => (false ? <Main /> : <Redirect to="/auth" />)}
+        />
+        <Route path="/" render={() => <Redirect to="/auth" />} />
       </Switch>
     </div>
   );
-}
+};
 
 export default App;

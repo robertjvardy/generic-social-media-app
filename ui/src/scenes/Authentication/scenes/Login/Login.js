@@ -2,10 +2,12 @@ import React from "react";
 import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import Cookie from "js-cookie";
 import { Formik } from "formik";
 import { makeStyles } from "@material-ui/core/styles";
-import "./styles.css";
 import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUserInfo } from "../../slice";
 
 const useStyles = makeStyles({
   button: {
@@ -21,6 +23,7 @@ const useStyles = makeStyles({
 const Login = () => {
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
   return (
     <>
       <h2>Login</h2>
@@ -28,10 +31,14 @@ const Login = () => {
         initialValues={{ email: "", password: "" }}
         onSubmit={(values, { setSubmitting }) => {
           axios
-            .post("http://localhost:5000/api/user/login", {
+            .post("/api/user/login", {
               ...values,
             })
-            .then((response) => console.log(response.data));
+            .then((response) => {
+              dispatch(setUserInfo(response.data));
+              Cookie.set("auth-token", response.data.authToken);
+              history.push("/main");
+            });
         }}
       >
         {({ values, errors, touched, handleChange, handleSubmit }) => (
@@ -63,7 +70,7 @@ const Login = () => {
                 variant="contained"
                 className={classes.button}
                 color="secondary"
-                onClick={() => history.push("/register")}
+                onClick={() => history.push("/auth/register")}
               >
                 Sign Up
               </Button>
