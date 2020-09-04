@@ -7,7 +7,7 @@ import { Formik } from "formik";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setUserInfo } from "../../slice";
+import { setUserInfo, setToken } from "../../slice";
 
 const useStyles = makeStyles({
   button: {
@@ -35,7 +35,8 @@ const Login = () => {
               ...values,
             })
             .then((response) => {
-              dispatch(setUserInfo(response.data));
+              dispatch(setUserInfo(response.data.userInfo));
+              dispatch(setToken(response.data.authToken));
               Cookie.set("auth-token", response.data.authToken);
               history.push("/main");
             });

@@ -71,10 +71,29 @@ router.post("/login", (req, res) => {
     });
 });
 
-router.post("/authenticate", (req, res) => {
-  const verified = jwt.verify(req.body.token, process.env.TOKEN_SECRET);
+router.post("/authenticate", async (req, res) => {
+  const token = req.body.token;
+
+  if (!token) {
+    return res.status(401).json({ message: "Missing Token!" });
+  }
+
+  const verified = jwt.verify(token, process.env.TOKEN_SECRET);
+
   if (verified) {
-    return res.status(200).json({ verified: true });
+    const user = await User.findOne({ _id: verified._id });
+
+    if (!user) {
+      return res.status(401).json({ message: "Email or Password incorrect!" });
+    }
+
+    const { friends, posts, email, firstName, lastName } = user;
+
+    return res.status(200).json({
+      verified: true,
+      user: { friends, posts, email, firstName, lastName },
+      token,
+    });
   }
   return res.status(400).json({ verified: false });
 });

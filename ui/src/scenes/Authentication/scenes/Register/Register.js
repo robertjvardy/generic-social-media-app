@@ -6,7 +6,7 @@ import { Formik } from "formik";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setRegistered, setUserInfo, setError } from "../../slice";
+import { setRegistered, setError } from "../../slice";
 
 const useStyles = makeStyles({
   button: {
