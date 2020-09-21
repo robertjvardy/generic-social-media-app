@@ -7,5 +7,11 @@
   .register-form-container {
     display: flex;
     flex-direction: column;
+    min-width: 300px;
+  }
+  .error-message {
+    color: red;
+    font-size: large;
+    margin: 1rem 0;
   }
 }

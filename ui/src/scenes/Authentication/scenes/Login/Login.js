@@ -6,8 +6,9 @@ import Cookie from "js-cookie";
 import { Formik } from "formik";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setUserInfo, setToken } from "../../slice";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserInfo, setToken, setError } from "../../slice";
+import { getError } from "../../selectors";
 
 const useStyles = makeStyles({
   button: {
@@ -24,9 +25,11 @@ const Login = () => {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
+  const error = useSelector(getError);
   return (
     <>
       <h2>Login</h2>
+      {error && <div className="error-message">{error}</div>}
       <Formik
         initialValues={{ email: "", password: "" }}
         onSubmit={(values, { setSubmitting }) => {
@@ -37,9 +40,11 @@ const Login = () => {
             .then((response) => {
               dispatch(setUserInfo(response.data.userInfo));
               dispatch(setToken(response.data.authToken));
+              dispatch(setError(null));
               Cookie.set("auth-token", response.data.authToken);
               history.push("/main");
-            });
+            })
+            .catch((error) => dispatch(setError(error.response.data.message)));
         }}
       >
         {({ values, errors, touched, handleChange, handleSubmit }) => (
@@ -56,6 +61,7 @@ const Login = () => {
                 className={classes.input}
                 label="Password"
                 name="password"
+                // type="password"
                 variant="outlined"
                 onChange={handleChange}
               />

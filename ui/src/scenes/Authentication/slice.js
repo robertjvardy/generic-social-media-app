@@ -2,7 +2,7 @@ const { createSlice } = require("@reduxjs/toolkit");
 
 const initialState = {
   authenticated: false,
-  error: false,
+  error: "",
   registeredThisSession: false,
   authToken: "",
   user: {},

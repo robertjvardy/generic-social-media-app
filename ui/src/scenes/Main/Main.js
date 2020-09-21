@@ -6,6 +6,9 @@ import { getUser } from "../Authentication/selectors";
 import { useHistory } from "react-router-dom";
 import { logOutUser, setUserInfo, setToken } from "../Authentication/slice";
 import axios from "axios";
+import Feed from "./scenes/Feed/Feed";
+import "./styles.scss";
+import Layout from "./scenes/Layout/Layout";
 
 const Main = () => {
   const history = useHistory();
@@ -35,22 +38,24 @@ const Main = () => {
     }
   }, []);
 
+  // TODO create a wrapper component to take care of the layout and replace outer div
+
   return (
-    <>
-      <h3>{firstName}</h3>
-      <h3>{lastName}</h3>
-      <h3>{email}</h3>
-      <h3>{posts}</h3>
-      <h3>{friends}</h3>
-      <div>Logged In!!!!</div>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={() => handleLogOut()}
-      >
-        Log Out
-      </Button>
-    </>
+    <Layout>
+      <div className="main">
+        {/* TODO add a router here for the main content of the site */}
+        {/* TODO make main a container component for the layout of the main site */}
+        <Feed />
+        <div>Logged In!!!!</div>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => handleLogOut()}
+        >
+          Log Out
+        </Button>
+      </div>
+    </Layout>
   );
 };
 
